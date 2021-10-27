@@ -1,9 +1,11 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Dashboard from "../views//users/Dashboard.vue";
-import Signup from "../views//users/Signup.vue";
-import Login from "../views//users/Login.vue";
-import Logout from "../views//users/Logout.vue";
+import Dashboard from "../views/users/Dashboard.vue";
+import Signup from "../views/users/Signup.vue";
+import Login from "../views/users/Login.vue";
+import Logout from "../views/users/Logout.vue";
+import ExpensesCreate from "../views/ExpensesCreate.vue";
+import IncomesCreate from "../views/IncomesCreate.vue";
 
 Vue.use(VueRouter);
 
@@ -27,6 +29,16 @@ const routes = [
     path: "/logout",
     name: "logout",
     component: Logout,
+  },
+  {
+    path: "/expenses",
+    name: "expenses-create",
+    component: ExpensesCreate,
+  },
+  {
+    path: "/incomes",
+    name: "incomes-create",
+    component: IncomesCreate,
   },
 ];
 

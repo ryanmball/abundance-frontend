@@ -4,6 +4,10 @@
       <span v-if="isLoggedIn()">
         <router-link :to="`/users/${userID()}`">Dashboard</router-link>
         |
+        <router-link to="/expenses">New Expense</router-link>
+        |
+        <router-link to="/incomes">New Income</router-link>
+        |
         <router-link to="/logout">Logout</router-link>
       </span>
       <span v-else>
