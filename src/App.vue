@@ -1,13 +1,15 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link :to="`/users/${userID()}`">Dashboard</router-link>
-      |
       <span v-if="isLoggedIn()">
+        <router-link :to="`/users/${userID()}`">Dashboard</router-link>
+        |
         <router-link to="/logout">Logout</router-link>
       </span>
       <span v-else>
         <router-link to="/login">Login</router-link>
+        |
+        <router-link to="/signup">Signup</router-link>
       </span>
     </div>
     <router-view />

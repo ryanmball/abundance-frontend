@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import UserShow from "../views//users/UserShow.vue";
+import Dashboard from "../views//users/Dashboard.vue";
 import Signup from "../views//users/Signup.vue";
 import Login from "../views//users/Login.vue";
 import Logout from "../views//users/Logout.vue";
@@ -10,8 +10,8 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/users/:id",
-    name: "user-show",
-    component: UserShow,
+    name: "dashboard",
+    component: Dashboard,
   },
   {
     path: "/signup",
