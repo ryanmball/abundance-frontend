@@ -12,6 +12,10 @@
       <strong>Net Change:</strong>
       {{ netChange(monthly_incomes.total, monthly_expenses.total) }}
     </p>
+    <p>
+      <strong>Net Cash:</strong>
+      {{ net_cash["10"] }}
+    </p>
     <!-- {{ category_expenses }}
     <div v-for="category in category_expenses.category_expenses" v-bind:key="category">
       <p>{{ category }}</p>
@@ -41,6 +45,7 @@ export default {
       category_expenses: [],
       monthly_incomes: [],
       category_incomes: [],
+      net_cash: [],
     };
   },
   created: function () {
@@ -68,6 +73,10 @@ export default {
     //   console.log(response.data);
     //   this.category_incomes = response.data;
     // });
+    axios.get("/net_cash").then((response) => {
+      console.log(response.data);
+      this.net_cash = response.data;
+    });
   },
   methods: {
     netChange: (income, expense) => {
