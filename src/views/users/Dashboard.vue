@@ -1,11 +1,19 @@
 <template>
   <div>
     <p>
-      <strong>Total expenses:</strong>
-      {{ monthly_totals.total }}
+      <strong>Total Expenses:</strong>
+      {{ monthly_expenses.total }}
     </p>
-    <!-- {{ category_totals }}
-    <div v-for="category in category_totals.category_totals" v-bind:key="category">
+    <p>
+      <strong>Total Incomes:</strong>
+      {{ monthly_incomes.total }}
+    </p>
+    <p>
+      <strong>Net Change:</strong>
+      {{ netChange(monthly_incomes.total, monthly_expenses.total) }}
+    </p>
+    <!-- {{ category_expenses }}
+    <div v-for="category in category_expenses.category_expenses" v-bind:key="category">
       <p>{{ category }}</p>
     </div> -->
     <h1>Expenses</h1>
@@ -29,8 +37,10 @@ export default {
     return {
       expenses: [],
       incomes: [],
-      monthly_totals: [],
-      category_totals: [],
+      monthly_expenses: [],
+      category_expenses: [],
+      monthly_incomes: [],
+      category_incomes: [],
     };
   },
   created: function () {
@@ -42,15 +52,27 @@ export default {
       console.log(response.data);
       this.incomes = response.data;
     });
-    axios.get("/monthly_totals").then((response) => {
+    axios.get("/monthly_expenses").then((response) => {
       console.log(response.data);
-      this.monthly_totals = response.data;
+      this.monthly_expenses = response.data;
     });
-    // axios.get("/category_totals").then((response) => {
+    // axios.get("/category_expenses").then((response) => {
     //   console.log(response.data);
-    //   this.category_totals = response.data;
+    //   this.category_expenses = response.data;
+    // });
+    axios.get("/monthly_incomes").then((response) => {
+      console.log(response.data);
+      this.monthly_incomes = response.data;
+    });
+    // axios.get("/category_incomes").then((response) => {
+    //   console.log(response.data);
+    //   this.category_incomes = response.data;
     // });
   },
-  methods: {},
+  methods: {
+    netChange: (income, expense) => {
+      return (income - expense).toFixed(2);
+    },
+  },
 };
 </script>
