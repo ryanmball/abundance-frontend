@@ -1,23 +1,71 @@
 <template>
   <div>
+    <h3>Activity</h3>
     <p>
       <strong>Total Expenses:</strong>
-      {{ monthly_expenses.total }}
+      {{ monthlyExpenses.total }}
     </p>
     <p>
       <strong>Total Incomes:</strong>
-      {{ monthly_incomes.total }}
+      {{ monthlyIncomes.total }}
     </p>
     <p>
       <strong>Net Change:</strong>
-      {{ netChange(monthly_incomes.total, monthly_expenses.total) }}
+      {{ netChange(monthlyIncomes.total, monthlyExpenses.total) }}
     </p>
+    <hr />
+    <h3>Cash Available</h3>
     <p>
-      <strong>Net Cash:</strong>
-      {{ net_cash["10"] }}
+      <strong>Net Cash Beginning:</strong>
+      <!-- Equal to the netCash total from the previous month -->
+      {{ netCash[netCash.length - 1][1] }}
     </p>
-    <!-- {{ category_expenses }}
-    <div v-for="category in category_expenses.category_expenses" v-bind:key="category">
+    <form v-on:submit.prevent="currentBalanceCreate()">
+      <h3>New Current Balance</h3>
+      <ul>
+        <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
+      </ul>
+      <div>
+        <label>Checking 1:</label>
+        <input type="text" v-model="currentBalanceParams.checking1" />
+      </div>
+      <div>
+        <label>Checking 2:</label>
+        <input type="text" v-model="currentBalanceParams.checking2" />
+      </div>
+      <div>
+        <label>Savings 1:</label>
+        <input type="text" v-model="currentBalanceParams.savings1" />
+      </div>
+      <div>
+        <label>Savings 2:</label>
+        <input type="text" v-model="currentBalanceParams.savings2" />
+      </div>
+      <div>
+        <label>Credit Card 1:</label>
+        <input type="text" v-model="currentBalanceParams.credit_card1" />
+      </div>
+      <div>
+        <label>Credit Card 2:</label>
+        <input type="text" v-model="currentBalanceParams.credit_card2" />
+      </div>
+      <div>
+        <label>Credit Card 3:</label>
+        <input type="text" v-model="currentBalanceParams.credit_card3" />
+      </div>
+      <div>
+        <label>Credit Card 4:</label>
+        <input type="text" v-model="currentBalanceParams.credit_card4" />
+      </div>
+      <input type="submit" value="Submit" />
+    </form>
+    <p>
+      <strong>Net Cash Current:</strong>
+      <!-- Equal to the netCash total from the previous month -->
+      {{ currentBalance }}
+    </p>
+    <!-- {{ categoryExpenses }}
+    <div v-for="category in categoryExpenses.categoryExpenses" v-bind:key="category">
       <p>{{ category }}</p>
     </div> -->
     <h1>Expenses</h1>
@@ -41,11 +89,14 @@ export default {
     return {
       expenses: [],
       incomes: [],
-      monthly_expenses: [],
-      category_expenses: [],
-      monthly_incomes: [],
-      category_incomes: [],
-      net_cash: [],
+      monthlyExpenses: [],
+      categoryExpenses: [],
+      monthlyIncomes: [],
+      categoryIncomes: [],
+      netCash: [[0, 0]],
+      currentBalance: 0,
+      currentBalanceParams: {},
+      errors: [],
     };
   },
   created: function () {
@@ -59,28 +110,43 @@ export default {
     });
     axios.get("/monthly_expenses").then((response) => {
       console.log(response.data);
-      this.monthly_expenses = response.data;
+      this.monthlyExpenses = response.data;
     });
     // axios.get("/category_expenses").then((response) => {
     //   console.log(response.data);
-    //   this.category_expenses = response.data;
+    //   this.categoryExpenses = response.data;
     // });
     axios.get("/monthly_incomes").then((response) => {
       console.log(response.data);
-      this.monthly_incomes = response.data;
+      this.monthlyIncomes = response.data;
     });
     // axios.get("/category_incomes").then((response) => {
     //   console.log(response.data);
-    //   this.category_incomes = response.data;
+    //   this.categoryIncomes = response.data;
     // });
     axios.get("/net_cash").then((response) => {
       console.log(response.data);
-      this.net_cash = response.data;
+      this.netCash = response.data;
     });
   },
   methods: {
     netChange: (income, expense) => {
       return (income - expense).toFixed(2);
+    },
+    currentBalanceCreate: function () {
+      axios
+        .post("/current_balances", this.currentBalanceParams)
+        .then((response) => {
+          console.log(response.data);
+          this.currentBalanceParams = {};
+          this.currentBalance = response.data;
+        })
+        .catch((error) => {
+          this.errors = error.response.data.errors;
+        });
+    },
+    clearCurrentBalanceParams: function () {
+      this.currentBalanceParams = {};
     },
   },
 };

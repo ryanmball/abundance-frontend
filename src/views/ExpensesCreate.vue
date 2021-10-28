@@ -51,7 +51,7 @@ export default {
           this.errors = error.response.data.errors;
         });
     },
-    clearNewParams: function () {
+    clearNewExpenseParams: function () {
       this.newExpenseParams = {};
     },
   },
