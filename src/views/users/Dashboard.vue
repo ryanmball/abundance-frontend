@@ -61,8 +61,20 @@
     </form>
     <p>
       <strong>Net Cash Current:</strong>
-      <!-- Equal to the netCash total from the previous month -->
-      {{ currentBalance }}
+      {{ currentBalance.net_cash }}
+    </p>
+    <p>
+      <strong>Difference:</strong>
+      {{ cashDifference(currentBalance.net_cash, netCash[netCash.length - 1][1]) }}
+    </p>
+    <p>
+      <strong>Transactions Missing:</strong>
+      {{
+        transactionsMissing(
+          cashDifference(currentBalance.net_cash, netCash[netCash.length - 1][1]),
+          netChange(monthlyIncomes.total, monthlyExpenses.total)
+        )
+      }}
     </p>
     <!-- {{ categoryExpenses }}
     <div v-for="category in categoryExpenses.categoryExpenses" v-bind:key="category">
@@ -94,7 +106,7 @@ export default {
       monthlyIncomes: [],
       categoryIncomes: [],
       netCash: [[0, 0]],
-      currentBalance: 0,
+      currentBalance: {},
       currentBalanceParams: {},
       errors: [],
     };
@@ -128,10 +140,20 @@ export default {
       console.log(response.data);
       this.netCash = response.data;
     });
+    axios.get("/current_balances").then((response) => {
+      console.log(response.data);
+      this.currentBalance = response.data;
+    });
   },
   methods: {
     netChange: (income, expense) => {
       return (income - expense).toFixed(2);
+    },
+    cashDifference: (current, start) => {
+      return (current - start).toFixed(2);
+    },
+    transactionsMissing: (cashDiff, netChange) => {
+      return (cashDiff - netChange).toFixed(2);
     },
     currentBalanceCreate: function () {
       axios
