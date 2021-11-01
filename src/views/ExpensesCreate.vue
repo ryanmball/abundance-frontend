@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="expenses-create">
     <form v-on:submit.prevent="expenseCreate()">
       <h1>Create Expense</h1>
       <ul>

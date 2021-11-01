@@ -8,6 +8,8 @@
         |
         <router-link to="/incomes">New Income</router-link>
         |
+        <router-link to="/monthly-balances">New Monthly Balance</router-link>
+        |
         <router-link to="/logout">Logout</router-link>
       </span>
       <span v-else>
