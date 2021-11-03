@@ -2,7 +2,6 @@
   <div>
     Year:
     <select id="year" name="year" v-model="yearFilter">
-      <option></option>
       <option value="2021">2021</option>
       <option value="2022">2022</option>
       <option value="2023">2023</option>
@@ -16,7 +15,6 @@
     </select>
     Month:
     <select id="month" name="month" v-model="monthFilter">
-      <option></option>
       <option value="01">January</option>
       <option value="02">February</option>
       <option value="03">March</option>
