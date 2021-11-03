@@ -1,5 +1,35 @@
 <template>
   <div>
+    Year:
+    <select id="year" name="year" v-model="yearFilter">
+      <option></option>
+      <option value="2021">2021</option>
+      <option value="2022">2022</option>
+      <option value="2023">2023</option>
+      <option value="2024">2024</option>
+      <option value="2025">2025</option>
+      <option value="2026">2026</option>
+      <option value="2027">2027</option>
+      <option value="2028">2028</option>
+      <option value="2029">2029</option>
+      <option value="2030">2030</option>
+    </select>
+    Month:
+    <select id="month" name="month" v-model="monthFilter">
+      <option></option>
+      <option value="01">January</option>
+      <option value="02">February</option>
+      <option value="03">March</option>
+      <option value="04">April</option>
+      <option value="05">May</option>
+      <option value="06">June</option>
+      <option value="07">July</option>
+      <option value="08">August</option>
+      <option value="09">September</option>
+      <option value="10">October</option>
+      <option value="11">November</option>
+      <option value="12">December</option>
+    </select>
     <h3>Activity</h3>
     <p>
       <strong>Total Expenses:</strong>
@@ -17,8 +47,12 @@
     <h3>Cash Available</h3>
     <p>
       <strong>Net Cash Beginning:</strong>
-      <!-- Equal to the netCash total from the previous month -->
-      {{ netCash[netCash.length - 1][1] }}
+      <!-- Equal to the net cash available at the start of the current month -->
+      {{
+        monthlyNetCash
+          .filter((balance) => balance.year == yearFilter)
+          .filter((currentYearBalance) => currentYearBalance.month == monthFilter)[0].net_cash
+      }}
     </p>
     <form v-on:submit.prevent="currentBalanceCreate()">
       <h3>New Current Balance</h3>
@@ -65,16 +99,16 @@
     </p>
     <p>
       <strong>Difference:</strong>
-      {{ cashDifference(currentBalance.net_cash, netCash[netCash.length - 1][1]) }}
+      <!-- {{ cashDifference(currentBalance.net_cash, monthlyNetCash[monthlyNetCash.length - 1][1]) }} -->
     </p>
     <p>
       <strong>Transactions Missing:</strong>
-      {{
+      <!-- {{
         transactionsMissing(
-          cashDifference(currentBalance.net_cash, netCash[netCash.length - 1][1]),
+          cashDifference(currentBalance.net_cash, monthlyNetCash[monthlyNetCash.length - 1][1]),
           netChange(monthlyIncomes.total, monthlyExpenses.total)
         )
-      }}
+      }} -->
     </p>
     <!-- {{ categoryExpenses }}
     <div v-for="category in categoryExpenses.categoryExpenses" v-bind:key="category">
@@ -105,10 +139,12 @@ export default {
       categoryExpenses: [],
       monthlyIncomes: [],
       categoryIncomes: [],
-      netCash: [[0, 0]],
+      monthlyNetCash: [{ net_cash: 0 }],
       currentBalance: {},
       currentBalanceParams: {},
       errors: [],
+      yearFilter: new Date().getFullYear(),
+      monthFilter: new Date().getMonth() + 1,
     };
   },
   created: function () {
@@ -138,7 +174,7 @@ export default {
     // });
     axios.get("/net_cash").then((response) => {
       console.log(response.data);
-      this.netCash = response.data;
+      this.monthlyNetCash = response.data;
     });
     axios.get("/current_balances").then((response) => {
       console.log(response.data);
