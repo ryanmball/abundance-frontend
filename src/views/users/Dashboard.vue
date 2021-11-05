@@ -45,14 +45,14 @@
       </p>
       <p>
         <strong>Net Change:</strong>
-        {{ netChange(computedIncome, computedExpense) }}
+        {{ netChange }}
       </p>
       <hr />
       <h3>Cash Available</h3>
       <p>
         <strong>Net Cash Beginning:</strong>
         <!-- Equal to the net cash available at the start of the current month -->
-        {{ computedNetCash.net_cash }}
+        {{ netCashBeginning.net_cash }}
       </p>
       <form v-on:submit.prevent="currentBalanceCreate()">
         <h3>New Current Balance</h3>
@@ -93,23 +93,34 @@
         </div>
         <input type="submit" value="Submit" />
       </form>
-      <p>
-        <strong>Net Cash Current:</strong>
-        {{ currentBalance.net_cash }}
-      </p>
-      <p>
-        <strong>Difference:</strong>
-        {{ cashDifference(currentBalance.net_cash, computedNetCash.net_cash) }}
-      </p>
-      <p>
-        <strong>Transactions Missing:</strong>
-        {{
-          transactionsMissing(
-            cashDifference(currentBalance.net_cash, computedNetCash.net_cash),
-            netChange(computedIncome, computedExpense)
-          )
-        }}
-      </p>
+      <div v-if="monthFilter === new Date().getMonth() + 1">
+        <p>
+          <strong>Net Cash Current:</strong>
+          {{ currentBalance.net_cash }}
+        </p>
+        <p>
+          <strong>Difference:</strong>
+          {{ currentCashDiff }}
+        </p>
+        <p>
+          <strong>Transactions Missing:</strong>
+          {{ currentMissing }}
+        </p>
+      </div>
+      <div v-else>
+        <p>
+          <strong>Net Cash Ending:</strong>
+          <!-- {{ netCashEnding }} -->
+        </p>
+        <p>
+          <strong>Difference:</strong>
+          <!-- {{ previousCashDiff }} -->
+        </p>
+        <p>
+          <strong>Transactions Missing:</strong>
+          <!-- {{ previousMissing }} -->
+        </p>
+      </div>
       <!-- {{ categoryExpenses }}
     <div v-for="category in categoryExpenses.categoryExpenses" v-bind:key="category">
       <p>{{ category }}</p>
@@ -140,8 +151,9 @@ export default {
       categoryExpenses: [],
       monthlyIncomes: [],
       categoryIncomes: [],
+      currentNetCash: {},
       monthlyNetCash: [],
-      selectedNetCash: {},
+      endingBalance: {},
       currentBalance: {},
       currentBalanceParams: {},
       errors: [],
@@ -184,28 +196,39 @@ export default {
     });
   },
   computed: {
-    computedNetCash: function () {
+    netCashBeginning: function () {
       return this.monthlyNetCash
         .filter((balance) => balance.year == this.yearFilter)
         .filter((currentYearBalance) => currentYearBalance.month == this.monthFilter)[0];
     },
+    // netCashEnding: function () {
+    //   return this.monthlyNetCash
+    //     .filter((balance) => balance.year == this.yearFilter)
+    //     .filter((currentYearBalance) => currentYearBalance.month == this.monthFilter)[0];
+    // },
     computedIncome: function () {
       return this.monthlyIncomes.monthly_incomes[this.monthFilter];
     },
     computedExpense: function () {
       return this.monthlyExpenses.monthly_expenses[this.monthFilter];
     },
+    netChange: function () {
+      return (this.computedIncome - this.computedExpense).toFixed(2);
+    },
+    currentCashDiff: function () {
+      return (this.currentBalance.net_cash - this.netCashBeginning.net_cash).toFixed(2);
+    },
+    currentMissing: function () {
+      return (this.currentCashDiff - this.netChange).toFixed(2);
+    },
+    // previousCashDiff: function () {
+    //   return (this.netCashEnding.net_cash - this.netCashBeginning.net_cash).toFixed(2);
+    // },
+    // previousMissing: function () {
+    //   return (this.previousCashDiff - this.netChange).toFixed(2);
+    // },
   },
   methods: {
-    netChange: (income, expense) => {
-      return (income - expense).toFixed(2);
-    },
-    cashDifference: (current, start) => {
-      return (current - start).toFixed(2);
-    },
-    transactionsMissing: (cashDiff, netChange) => {
-      return (cashDiff - netChange).toFixed(2);
-    },
     currentBalanceCreate: function () {
       axios
         .post("/current_balances", this.currentBalanceParams)
