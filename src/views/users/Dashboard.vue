@@ -52,7 +52,7 @@
       <p>
         <strong>Net Cash Beginning:</strong>
         <!-- Equal to the net cash available at the start of the current month -->
-        {{ netCashBeginning.net_cash }}
+        {{ netCashBeginning }}
       </p>
       <form v-on:submit.prevent="currentBalanceCreate()">
         <h3>New Current Balance</h3>
@@ -110,15 +110,15 @@
       <div v-else>
         <p>
           <strong>Net Cash Ending:</strong>
-          <!-- {{ netCashEnding }} -->
+          {{ netCashEnding }}
         </p>
         <p>
           <strong>Difference:</strong>
-          <!-- {{ previousCashDiff }} -->
+          {{ previousCashDiff }}
         </p>
         <p>
           <strong>Transactions Missing:</strong>
-          <!-- {{ previousMissing }} -->
+          {{ previousMissing }}
         </p>
       </div>
       <!-- {{ categoryExpenses }}
@@ -152,7 +152,7 @@ export default {
       monthlyIncomes: [],
       categoryIncomes: [],
       currentNetCash: {},
-      monthlyNetCash: [],
+      monthlyNetCash: { net_cash: 0 },
       endingBalance: {},
       currentBalance: {},
       currentBalanceParams: {},
@@ -199,13 +199,13 @@ export default {
     netCashBeginning: function () {
       return this.monthlyNetCash
         .filter((balance) => balance.year == this.yearFilter)
-        .filter((currentYearBalance) => currentYearBalance.month == this.monthFilter)[0];
+        .filter((currentYearBalance) => currentYearBalance.month == this.monthFilter)[0].net_cash;
     },
-    // netCashEnding: function () {
-    //   return this.monthlyNetCash
-    //     .filter((balance) => balance.year == this.yearFilter)
-    //     .filter((currentYearBalance) => currentYearBalance.month == this.monthFilter)[0];
-    // },
+    netCashEnding: function () {
+      return this.monthlyNetCash
+        .filter((balance) => balance.year == this.yearFilter)
+        .filter((currentYearBalance) => currentYearBalance.month == parseInt(this.monthFilter) + 1)[0].net_cash;
+    },
     computedIncome: function () {
       return this.monthlyIncomes.monthly_incomes[this.monthFilter];
     },
@@ -216,17 +216,17 @@ export default {
       return (this.computedIncome - this.computedExpense).toFixed(2);
     },
     currentCashDiff: function () {
-      return (this.currentBalance.net_cash - this.netCashBeginning.net_cash).toFixed(2);
+      return (this.currentBalance.net_cash - this.netCashBeginning).toFixed(2);
     },
     currentMissing: function () {
       return (this.currentCashDiff - this.netChange).toFixed(2);
     },
-    // previousCashDiff: function () {
-    //   return (this.netCashEnding.net_cash - this.netCashBeginning.net_cash).toFixed(2);
-    // },
-    // previousMissing: function () {
-    //   return (this.previousCashDiff - this.netChange).toFixed(2);
-    // },
+    previousCashDiff: function () {
+      return (this.netCashEnding - this.netCashBeginning).toFixed(2);
+    },
+    previousMissing: function () {
+      return (this.previousCashDiff - this.netChange).toFixed(2);
+    },
   },
   methods: {
     currentBalanceCreate: function () {
