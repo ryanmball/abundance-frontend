@@ -23,6 +23,7 @@
       </div>
       <input type="submit" value="Submit" />
     </form>
+    {{ recurringExpenses }}
   </div>
 </template>
 
@@ -36,9 +37,15 @@ export default {
     return {
       newExpenseParams: {},
       errors: [],
+      recurringExpenses: [],
     };
   },
-  created: function () {},
+  created: function () {
+    axios.get("/recurring_expenses").then((response) => {
+      console.log(response.date);
+      this.recurringExpenses = response.data;
+    });
+  },
   methods: {
     expenseCreate: function () {
       axios
