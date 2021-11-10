@@ -1,138 +1,137 @@
 <template>
   <div>
-    <button v-on:click="currentDate()" v-if="!monthFilter">Show Dashboard</button>
-    <div v-if="monthFilter">
-      <span>
-        Year:
-        <select id="year" name="year" v-model="yearFilter">
-          <option value="2021">2021</option>
-          <option value="2022">2022</option>
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-          <option value="2025">2025</option>
-          <option value="2026">2026</option>
-          <option value="2027">2027</option>
-          <option value="2028">2028</option>
-          <option value="2029">2029</option>
-          <option value="2030">2030</option>
-        </select>
-      </span>
-      <span>
-        Month:
-        <select id="month" name="month" v-model="monthFilter">
-          <option value="01">January</option>
-          <option value="02">February</option>
-          <option value="03">March</option>
-          <option value="04">April</option>
-          <option value="05">May</option>
-          <option value="06">June</option>
-          <option value="07">July</option>
-          <option value="08">August</option>
-          <option value="09">September</option>
-          <option value="10">October</option>
-          <option value="11">November</option>
-          <option value="12">December</option>
-        </select>
-      </span>
-      <h3>Activity</h3>
+    <span>
+      Year:
+      <select id="year" name="year" v-model="yearFilter">
+        <option value="2021">2021</option>
+        <option value="2022">2022</option>
+        <option value="2023">2023</option>
+        <option value="2024">2024</option>
+        <option value="2025">2025</option>
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+        <option value="2028">2028</option>
+        <option value="2029">2029</option>
+        <option value="2030">2030</option>
+      </select>
+    </span>
+    <span>
+      Month:
+      <select id="month" name="month" v-model="monthFilter">
+        <option value="1">January</option>
+        <option value="2">February</option>
+        <option value="3">March</option>
+        <option value="4">April</option>
+        <option value="5">May</option>
+        <option value="6">June</option>
+        <option value="7">July</option>
+        <option value="8">August</option>
+        <option value="9">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+    </span>
+    <h3>Activity</h3>
+    <div v-for="month in filterBy(monthlyData, dateID, 'date_identifier')" v-bind:key="month.date_identifier">
       <p>
         <strong>Total Expenses:</strong>
-        {{ computedExpense }}
+        {{ month.expenses }}
       </p>
       <p>
         <strong>Total Incomes:</strong>
-        {{ computedIncome }}
+        {{ month.incomes }}
       </p>
       <p>
         <strong>Net Change:</strong>
-        {{ netChange }}
+        {{ (month.incomes - month.expenses).toFixed(2) }}
       </p>
       <hr />
       <h3>Cash Available</h3>
       <p>
         <strong>Net Cash Beginning:</strong>
-        <!-- Equal to the net cash available at the start of the current month -->
-        {{ netCashBeginning }}
+        {{ month.beginning_net_cash }}
       </p>
-      <form v-on:submit.prevent="currentBalanceCreate()">
-        <h3>New Current Balance</h3>
-        <ul>
-          <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
-        </ul>
-        <div>
-          <label>Checking 1:</label>
-          <input type="text" v-model="currentBalanceParams.checking1" />
-        </div>
-        <div>
-          <label>Checking 2:</label>
-          <input type="text" v-model="currentBalanceParams.checking2" />
-        </div>
-        <div>
-          <label>Savings 1:</label>
-          <input type="text" v-model="currentBalanceParams.savings1" />
-        </div>
-        <div>
-          <label>Savings 2:</label>
-          <input type="text" v-model="currentBalanceParams.savings2" />
-        </div>
-        <div>
-          <label>Credit Card 1:</label>
-          <input type="text" v-model="currentBalanceParams.credit_card1" />
-        </div>
-        <div>
-          <label>Credit Card 2:</label>
-          <input type="text" v-model="currentBalanceParams.credit_card2" />
-        </div>
-        <div>
-          <label>Credit Card 3:</label>
-          <input type="text" v-model="currentBalanceParams.credit_card3" />
-        </div>
-        <div>
-          <label>Credit Card 4:</label>
-          <input type="text" v-model="currentBalanceParams.credit_card4" />
-        </div>
-        <input type="submit" value="Submit" />
-      </form>
-      <div v-if="monthFilter === new Date().getMonth() + 1">
+      <div v-if="currentDate">
         <p>
           <strong>Net Cash Current:</strong>
           {{ currentBalance.net_cash }}
         </p>
         <p>
           <strong>Difference:</strong>
-          {{ currentCashDiff }}
+          {{ (currentBalance.net_cash - month.beginning_net_cash).toFixed(2) }}
         </p>
         <p>
           <strong>Transactions Missing:</strong>
-          {{ currentMissing }}
+          {{
+            (currentBalance.net_cash - month.beginning_net_cash).toFixed(2) -
+            (month.incomes - month.expenses).toFixed(2)
+          }}
         </p>
       </div>
       <div v-else>
         <p>
           <strong>Net Cash Ending:</strong>
-          {{ netCashEnding }}
+          {{ month.ending_net_cash }}
         </p>
         <p>
           <strong>Difference:</strong>
-          {{ previousCashDiff }}
+          {{ (month.ending_net_cash - month.beginning_net_cash).toFixed(2) }}
         </p>
         <p>
           <strong>Transactions Missing:</strong>
-          {{ previousMissing }}
+          {{
+            (month.ending_net_cash - month.beginning_net_cash).toFixed(2) - (month.incomes - month.expenses).toFixed(2)
+          }}
         </p>
       </div>
-      <!-- {{ categoryExpenses }}
-    <div v-for="category in categoryExpenses.categoryExpenses" v-bind:key="category">
-      <p>{{ category }}</p>
-    </div> -->
-      <h1>Expenses</h1>
-      <div v-for="expense in expenses" v-bind:key="`${expense.id}A`">
-        <p>{{ expense.date }} {{ expense.category }} {{ expense.amount }}</p>
+    </div>
+    <form v-on:submit.prevent="currentBalanceCreate()">
+      <h3>New Current Balance</h3>
+      <ul>
+        <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
+      </ul>
+      <div>
+        <label>Checking 1:</label>
+        <input type="text" v-model="currentBalanceParams.checking1" />
       </div>
-      <h1>Incomes</h1>
-      <div v-for="income in incomes" v-bind:key="`${income.id}B`">
-        <p>{{ income.date }} {{ income.category }} {{ income.amount }}</p>
+      <div>
+        <label>Checking 2:</label>
+        <input type="text" v-model="currentBalanceParams.checking2" />
       </div>
+      <div>
+        <label>Savings 1:</label>
+        <input type="text" v-model="currentBalanceParams.savings1" />
+      </div>
+      <div>
+        <label>Savings 2:</label>
+        <input type="text" v-model="currentBalanceParams.savings2" />
+      </div>
+      <div>
+        <label>Credit Card 1:</label>
+        <input type="text" v-model="currentBalanceParams.credit_card1" />
+      </div>
+      <div>
+        <label>Credit Card 2:</label>
+        <input type="text" v-model="currentBalanceParams.credit_card2" />
+      </div>
+      <div>
+        <label>Credit Card 3:</label>
+        <input type="text" v-model="currentBalanceParams.credit_card3" />
+      </div>
+      <div>
+        <label>Credit Card 4:</label>
+        <input type="text" v-model="currentBalanceParams.credit_card4" />
+      </div>
+      <input type="submit" value="Submit" />
+    </form>
+    <h1>Expenses</h1>
+    <div v-for="expense in expenses" v-bind:key="`${expense.id}A`">
+      <p>{{ expense.date }} {{ expense.category }} {{ expense.amount }}</p>
+    </div>
+    <h1>Incomes</h1>
+    <div v-for="income in incomes" v-bind:key="`${income.id}B`">
+      <p>{{ income.date }} {{ income.category }} {{ income.amount }}</p>
     </div>
   </div>
 </template>
@@ -149,18 +148,14 @@ export default {
     return {
       expenses: [],
       incomes: [],
-      monthlyExpenses: [],
-      categoryExpenses: [],
-      monthlyIncomes: [],
-      categoryIncomes: [],
-      currentNetCash: {},
-      monthlyNetCash: { net_cash: 0 },
-      endingBalance: {},
+      monthlyData: [],
       currentBalance: {},
       currentBalanceParams: {},
       errors: [],
-      yearFilter: 0,
-      monthFilter: 0,
+      dateID: "",
+      currentDate: true,
+      yearFilter: new Date().getFullYear(),
+      monthFilter: new Date().getMonth() + 1,
     };
   },
   created: function () {
@@ -172,63 +167,21 @@ export default {
       console.log(response.data);
       this.incomes = response.data;
     });
-    axios.get("/monthly_expenses").then((response) => {
+    axios.get("/calcs/monthly_data").then((response) => {
       console.log(response.data);
-      this.monthlyExpenses = response.data;
-    });
-    // axios.get("/category_expenses").then((response) => {
-    //   console.log(response.data);
-    //   this.categoryExpenses = response.data;
-    // });
-    axios.get("/monthly_incomes").then((response) => {
-      console.log(response.data);
-      this.monthlyIncomes = response.data;
-    });
-    // axios.get("/category_incomes").then((response) => {
-    //   console.log(response.data);
-    //   this.categoryIncomes = response.data;
-    // });
-    axios.get("/net_cash").then((response) => {
-      console.log(response.data);
-      this.monthlyNetCash = response.data;
+      this.monthlyData = response.data;
     });
     axios.get("/current_balances").then((response) => {
       console.log(response.data);
       this.currentBalance = response.data;
     });
   },
-  computed: {
-    netCashBeginning: function () {
-      return this.monthlyNetCash
-        .filter((balance) => balance.year == this.yearFilter)
-        .filter((currentYearBalance) => currentYearBalance.month == this.monthFilter)[0].net_cash;
+  watch: {
+    yearFilter: {
+      handler: "updateDate",
+      immediate: true,
     },
-    netCashEnding: function () {
-      return this.monthlyNetCash
-        .filter((balance) => balance.year == this.yearFilter)
-        .filter((currentYearBalance) => currentYearBalance.month == parseInt(this.monthFilter) + 1)[0].net_cash;
-    },
-    computedIncome: function () {
-      return this.monthlyIncomes.monthly_incomes[this.monthFilter];
-    },
-    computedExpense: function () {
-      return this.monthlyExpenses.monthly_expenses[this.monthFilter];
-    },
-    netChange: function () {
-      return (this.computedIncome - this.computedExpense).toFixed(2);
-    },
-    currentCashDiff: function () {
-      return (this.currentBalance.net_cash - this.netCashBeginning).toFixed(2);
-    },
-    currentMissing: function () {
-      return (this.currentCashDiff - this.netChange).toFixed(2);
-    },
-    previousCashDiff: function () {
-      return (this.netCashEnding - this.netCashBeginning).toFixed(2);
-    },
-    previousMissing: function () {
-      return (this.previousCashDiff - this.netChange).toFixed(2);
-    },
+    monthFilter: "updateDate",
   },
   methods: {
     currentBalanceCreate: function () {
@@ -246,9 +199,13 @@ export default {
     clearCurrentBalanceParams: function () {
       this.currentBalanceParams = {};
     },
-    currentDate: function () {
-      this.yearFilter = new Date().getFullYear();
-      this.monthFilter = new Date().getMonth() + 1;
+    updateDate: function () {
+      this.dateID = `${this.monthFilter}.${this.yearFilter}`;
+      if (this.monthFilter != new Date().getMonth() + 1 || this.yearFilter != new Date().getFullYear()) {
+        this.currentDate = false;
+      } else {
+        this.currentDate = true;
+      }
     },
   },
 };
