@@ -63,10 +63,7 @@
         </p>
         <p>
           <strong>Transactions Missing:</strong>
-          {{
-            (currentBalance.net_cash - month.beginning_net_cash).toFixed(2) -
-            (month.incomes - month.expenses).toFixed(2)
-          }}
+          {{ (currentBalance.net_cash - month.beginning_net_cash - (month.incomes - month.expenses)).toFixed(2) }}
         </p>
       </div>
       <div v-else>
@@ -80,9 +77,7 @@
         </p>
         <p>
           <strong>Transactions Missing:</strong>
-          {{
-            (month.ending_net_cash - month.beginning_net_cash).toFixed(2) - (month.incomes - month.expenses).toFixed(2)
-          }}
+          {{ (month.ending_net_cash - month.beginning_net_cash - (month.incomes - month.expenses)).toFixed(2) }}
         </p>
       </div>
     </div>
