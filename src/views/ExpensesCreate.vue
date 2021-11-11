@@ -2,6 +2,12 @@
   <div class="expenses-create">
     <form v-on:submit.prevent="expenseCreate()">
       <h1>Create Expense</h1>
+      <datalist id="recurring">
+        <option v-for="expense in recurringExpenses" v-bind:key="expense.id">
+          {{ expense.description }}
+        </option>
+      </datalist>
+      <input type="text" list="recurrring" v-model="recurringSelected" />
       <ul>
         <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
       </ul>
@@ -38,11 +44,12 @@ export default {
       newExpenseParams: {},
       errors: [],
       recurringExpenses: [],
+      recurringSelected: "",
     };
   },
   created: function () {
     axios.get("/recurring_expenses").then((response) => {
-      console.log(response.date);
+      console.log("Recurring Expenses", response.data);
       this.recurringExpenses = response.data;
     });
   },

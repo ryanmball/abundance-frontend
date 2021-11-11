@@ -56,7 +56,7 @@ export default {
   },
   created: function () {
     axios.get(`/users/${localStorage.getItem("user_id")}`).then((response) => {
-      console.log(response.data);
+      console.log("Current User", response.data);
       this.user = response.data;
     });
   },
