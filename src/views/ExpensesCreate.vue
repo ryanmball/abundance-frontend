@@ -2,12 +2,18 @@
   <div class="expenses-create">
     <form v-on:submit.prevent="expenseCreate()">
       <h1>Create Expense</h1>
-      <datalist id="recurring">
-        <option v-for="expense in recurringExpenses" v-bind:key="expense.id">
-          {{ expense.description }}
-        </option>
-      </datalist>
-      <input type="text" list="recurrring" v-model="recurringSelected" />
+      <label>Recurring Expense:</label>
+      <input type="checkbox" value="true" v-model="isRecurring" @change="clearRecurring" />
+      <br />
+      <span v-if="isRecurring">
+        <select id="recurring" name="recurring" v-model="nameSelected" @change="setRecurring()">
+          <optgroup v-for="category in recurringCategories" v-bind:key="category" :label="category">
+            <option v-for="name in recurringNames[category]" :key="name" :value="name">
+              {{ name }}
+            </option>
+          </optgroup>
+        </select>
+      </span>
       <ul>
         <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
       </ul>
@@ -28,8 +34,19 @@
         <input type="text" v-model="newExpenseParams.description" />
       </div>
       <input type="submit" value="Submit" />
+      <button type="button" @click="clearNewExpenseParams()">Clear</button>
     </form>
-    {{ recurringExpenses }}
+    <!-- <div>
+      <h3>Recurring Expenses</h3>
+      <ul>
+        <li v-for="expense in recurringExpenses" :key="expense.id">
+          <strong>Name:</strong>
+          {{ expense.name }}&nbsp;&nbsp;&nbsp;
+          <strong>Estimate:</strong>
+          {{ expense.estimate }}
+        </li>
+      </ul>
+    </div> -->
   </div>
 </template>
 
@@ -44,13 +61,27 @@ export default {
       newExpenseParams: {},
       errors: [],
       recurringExpenses: [],
-      recurringSelected: "",
+      recurringCategories: [],
+      recurringTotals: [],
+      recurringNames: [],
+      nameSelected: "",
+      recurringSelected: {},
+      isRecurring: false,
     };
   },
   created: function () {
     axios.get("/recurring_expenses").then((response) => {
       console.log("Recurring Expenses", response.data);
       this.recurringExpenses = response.data;
+    });
+    axios.get("/recurring_expenses_totals").then((response) => {
+      console.log("Recurring Totals", response.data);
+      this.recurringTotals = response.data;
+    });
+    axios.get("/recurring_expenses_names").then((response) => {
+      console.log("Recurring Names", response.data);
+      this.recurringNames = response.data;
+      this.recurringCategories = Object.keys(response.data).sort();
     });
   },
   methods: {
@@ -64,9 +95,21 @@ export default {
         .catch((error) => {
           this.errors = error.response.data.errors;
         });
+      this.isRecurring = false;
     },
     clearNewExpenseParams: function () {
       this.newExpenseParams = {};
+      this.isRecurring = false;
+      this.nameSelected = "";
+    },
+    clearRecurring: function () {
+      this.nameSelected = "";
+      this.newExpenseParams = {};
+    },
+    setRecurring: function () {
+      this.recurringSelected = this.recurringExpenses.find((expense) => expense.name === this.nameSelected);
+      this.newExpenseParams.category = this.recurringSelected.category;
+      this.newExpenseParams.description = this.recurringSelected.description;
     },
   },
 };
