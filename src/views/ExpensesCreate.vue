@@ -33,6 +33,14 @@
         <label>Description:</label>
         <input type="text" v-model="newExpenseParams.description" />
       </div>
+      <div>
+        <label>Expense Group:</label>
+        <select id="recurring" name="recurring" v-model="nameSelected" @change="setRecurring()">
+          <option v-for="group in expenseGroups" :key="group.id" :value="group.id">
+            {{ group.name }}
+          </option>
+        </select>
+      </div>
       <input type="submit" value="Submit" />
       <button type="button" @click="clearParams()">Clear</button>
     </form>
@@ -43,15 +51,15 @@
       </ul>
       <div>
         <label>Name:</label>
-        <input type="date" v-model="newExpenseGroupParams.name" />
+        <input type="text" v-model="newExpenseGroupParams.name" />
       </div>
       <div>
         <label>Start Date:</label>
-        <input type="text" v-model="newExpenseGroupParams.start_date" />
+        <input type="date" v-model="newExpenseGroupParams.start_date" />
       </div>
       <div>
         <label>End Date:</label>
-        <input type="text" v-model="newExpenseGroupParams.end_date" />
+        <input type="date" v-model="newExpenseGroupParams.end_date" />
       </div>
       <input type="submit" value="Submit" />
       <button type="button" @click="clearParams()">Clear</button>
@@ -106,7 +114,7 @@ export default {
       this.recurringCategories = Object.keys(response.data).sort();
     });
     axios.get("/expense_groups").then((response) => {
-      console.log(response.data);
+      console.log("Expense Groups", response.data);
       this.expenseGroups = response.data;
     });
   },
@@ -127,7 +135,7 @@ export default {
     },
     expenseGroupCreate: function () {
       axios
-        .post("/expenses", this.newExpenseGroupParams)
+        .post("/expense_groups", this.newExpenseGroupParams)
         .then((response) => {
           console.log(response.data);
           this.newExpenseGroupParams = {};
