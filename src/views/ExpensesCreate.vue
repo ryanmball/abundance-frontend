@@ -35,7 +35,7 @@
       </div>
       <div>
         <label>Expense Group:</label>
-        <select id="recurring" name="recurring" v-model="nameSelected" @change="setRecurring()">
+        <select id="group" name="group" v-model="newExpenseParams.expense_group_id">
           <option v-for="group in expenseGroups" :key="group.id" :value="group.id">
             {{ group.name }}
           </option>
