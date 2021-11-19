@@ -34,7 +34,27 @@
         <input type="text" v-model="newExpenseParams.description" />
       </div>
       <input type="submit" value="Submit" />
-      <button type="button" @click="clearNewExpenseParams()">Clear</button>
+      <button type="button" @click="clearParams()">Clear</button>
+    </form>
+    <form v-on:submit.prevent="expenseGroupCreate()">
+      <h1>Create Expense Group</h1>
+      <ul>
+        <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
+      </ul>
+      <div>
+        <label>Name:</label>
+        <input type="date" v-model="newExpenseGroupParams.name" />
+      </div>
+      <div>
+        <label>Start Date:</label>
+        <input type="text" v-model="newExpenseGroupParams.start_date" />
+      </div>
+      <div>
+        <label>End Date:</label>
+        <input type="text" v-model="newExpenseGroupParams.end_date" />
+      </div>
+      <input type="submit" value="Submit" />
+      <button type="button" @click="clearParams()">Clear</button>
     </form>
     <!-- <div>
       <h3>Recurring Expenses</h3>
@@ -67,6 +87,8 @@ export default {
       nameSelected: "",
       recurringSelected: {},
       isRecurring: false,
+      expenseGroups: [],
+      newExpenseGroupParams: {},
     };
   },
   created: function () {
@@ -83,22 +105,41 @@ export default {
       this.recurringNames = response.data;
       this.recurringCategories = Object.keys(response.data).sort();
     });
+    axios.get("/expense_groups").then((response) => {
+      console.log(response.data);
+      this.expenseGroups = response.data;
+    });
   },
   methods: {
     expenseCreate: function () {
+      this.newExpenseParams.recurring = this.isRecurring;
       axios
         .post("/expenses", this.newExpenseParams)
         .then((response) => {
           console.log(response.data);
           this.newExpenseParams = {};
+          this.isRecurring = false;
+          this.nameSelected = "";
         })
         .catch((error) => {
           this.errors = error.response.data.errors;
         });
-      this.isRecurring = false;
     },
-    clearNewExpenseParams: function () {
+    expenseGroupCreate: function () {
+      axios
+        .post("/expenses", this.newExpenseGroupParams)
+        .then((response) => {
+          console.log(response.data);
+          this.newExpenseGroupParams = {};
+          this.expenseGroups.push(response.data);
+        })
+        .catch((error) => {
+          this.errors = error.response.data.errors;
+        });
+    },
+    clearParams: function () {
       this.newExpenseParams = {};
+      this.newExpenseGroupParams = {};
       this.isRecurring = false;
       this.nameSelected = "";
     },
