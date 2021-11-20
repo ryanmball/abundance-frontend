@@ -64,6 +64,20 @@
       <input type="submit" value="Submit" />
       <button type="button" @click="clearParams()">Clear</button>
     </form>
+    <div v-for="group in expenseGroups" :key="group.id">
+      <h4>{{ group.name }} - {{ group.total }}</h4>
+      <span v-for="expense in group.expenses" :key="expense.id">
+        <strong>Date:</strong>
+        {{ expense.date }}&nbsp;
+        <strong>Category:</strong>
+        {{ expense.category }}&nbsp;
+        <strong>Description:</strong>
+        {{ expense.description }}&nbsp;
+        <strong>Amount:</strong>
+        {{ expense.amount }}
+        <br />
+      </span>
+    </div>
     <!-- <div>
       <h3>Recurring Expenses</h3>
       <ul>
