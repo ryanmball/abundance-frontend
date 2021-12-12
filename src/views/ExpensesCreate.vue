@@ -27,7 +27,12 @@
       </div>
       <div>
         <label>Category:</label>
-        <input type="text" v-model="newExpenseParams.category" />
+        <input list="categories" v-model="newExpenseParams.category" />
+        <datalist id="categories">
+          <option v-for="category in categories" :key="category" :value="category">
+            {{ category }}
+          </option>
+        </datalist>
       </div>
       <div>
         <label>Description:</label>
@@ -110,6 +115,7 @@ export default {
       recurringSelected: {},
       isRecurring: false,
       expenseGroups: [],
+      categories: [],
       newExpenseGroupParams: {},
     };
   },
@@ -130,6 +136,10 @@ export default {
     axios.get("/expense_groups").then((response) => {
       console.log("Expense Groups", response.data);
       this.expenseGroups = response.data;
+    });
+    axios.get("/categories").then((response) => {
+      console.log("Categories", response.data);
+      this.categories = response.data;
     });
   },
   methods: {
