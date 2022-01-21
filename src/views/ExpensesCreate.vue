@@ -7,7 +7,7 @@
       <br />
       <span v-if="isRecurring">
         <select id="recurring" name="recurring" v-model="nameSelected" @change="setRecurring()">
-          <optgroup v-for="category in recurringCategories" v-bind:key="category" :label="category">
+          <optgroup v-for="category in recurringCategories" :key="category" :label="category">
             <option v-for="name in recurringNames[category]" :key="name" :value="name">
               {{ name }}
             </option>
@@ -45,6 +45,10 @@
             {{ group.name }}
           </option>
         </select>
+      </div>
+      <div>
+        <label>Account ID:</label>
+        <input type="text" v-model="newExpenseParams.account_id" />
       </div>
       <input type="submit" value="Submit" />
       <button type="button" @click="clearParams()">Clear</button>

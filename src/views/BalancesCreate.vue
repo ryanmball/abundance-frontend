@@ -115,19 +115,13 @@
       </div>
       <div>
         <label>Part of Net Cash?</label>
-        <!-- <select v-model="newAccountParams.net_cash_calc">
-          <option value="false"></option>
-          <option value="true">Yes</option>
-        </select> -->
         <input type="checkbox" id="checkbox" v-model="newAccountParams.net_cash_calc" />
       </div>
       <input type="submit" value="Submit" />
-      <br />
-      {{ newAccountParams }}
-      <br />
-      <br />
-      <br />
     </form>
+    <br />
+    <br />
+    <br />
   </div>
 </template>
 
