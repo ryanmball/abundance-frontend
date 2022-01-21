@@ -106,21 +106,27 @@
         <input type="text" v-model="newAccountParams.description" />
       </div>
       <div>
-        <label>Type:</label>
-        <input type="text" v-model="newAccountParams.type" />
+        <label>Account Type:</label>
+        <input type="text" v-model="newAccountParams.account_type" />
       </div>
       <div>
         <label>Accounting Type:</label>
         <input type="text" v-model="newAccountParams.accounting_type" />
       </div>
       <div>
-        <label>Part of Net Cash?:</label>
-        <select v-model="newAccountParams.net_cash_calc">
-          <option value="false">No</option>
+        <label>Part of Net Cash?</label>
+        <!-- <select v-model="newAccountParams.net_cash_calc">
+          <option value="false"></option>
           <option value="true">Yes</option>
-        </select>
+        </select> -->
+        <input type="checkbox" id="checkbox" v-model="newAccountParams.net_cash_calc" />
       </div>
       <input type="submit" value="Submit" />
+      <br />
+      {{ newAccountParams }}
+      <br />
+      <br />
+      <br />
     </form>
   </div>
 </template>
