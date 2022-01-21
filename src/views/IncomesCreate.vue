@@ -7,19 +7,19 @@
       </ul>
       <div>
         <label>Date:</label>
-        <input type="date" v-model="newincomeParams.date" />
+        <input type="date" v-model="newIncomeParams.date" />
       </div>
       <div>
         <label>Amount:</label>
-        <input type="text" v-model="newincomeParams.amount" />
+        <input type="text" v-model="newIncomeParams.amount" />
       </div>
       <div>
         <label>Category:</label>
-        <input type="text" v-model="newincomeParams.category" />
+        <input type="text" v-model="newIncomeParams.category" />
       </div>
       <div>
         <label>Description:</label>
-        <input type="text" v-model="newincomeParams.description" />
+        <input type="text" v-model="newIncomeParams.description" />
       </div>
       <input type="submit" value="Submit" />
     </form>
@@ -34,7 +34,7 @@ import axios from "axios";
 export default {
   data: function () {
     return {
-      newincomeParams: {},
+      newIncomeParams: {},
       errors: [],
     };
   },
@@ -42,17 +42,17 @@ export default {
   methods: {
     incomeCreate: function () {
       axios
-        .post("/incomes", this.newincomeParams)
+        .post("/incomes", this.newIncomeParams)
         .then((response) => {
           console.log(response.data);
-          this.newincomeParams = {};
+          this.newIncomeParams = {};
         })
         .catch((error) => {
           this.errors = error.response.data.errors;
         });
     },
     clearNewParams: function () {
-      this.newincomeParams = {};
+      this.newIncomeParams = {};
     },
   },
 };
