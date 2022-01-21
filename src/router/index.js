@@ -6,7 +6,7 @@ import Login from "../views/users/Login.vue";
 import Logout from "../views/users/Logout.vue";
 import ExpensesCreate from "../views/ExpensesCreate.vue";
 import IncomesCreate from "../views/IncomesCreate.vue";
-import MonthlyBalancesCreate from "../views/MonthlyBalancesCreate.vue";
+import BalancesCreate from "../views/BalancesCreate.vue";
 
 Vue.use(VueRouter);
 
@@ -42,9 +42,9 @@ const routes = [
     component: IncomesCreate,
   },
   {
-    path: "/monthly-balances",
-    name: "monthly-balances-create",
-    component: MonthlyBalancesCreate,
+    path: "/balances",
+    name: "balances-create",
+    component: BalancesCreate,
   },
 ];
 
