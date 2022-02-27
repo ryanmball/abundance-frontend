@@ -40,7 +40,7 @@
       </div>
       <div>
         <label>Expense Group:</label>
-        <select id="group" name="group" v-model="newExpenseParams.expense_group_id">
+        <select name="group" id="group" v-model="newExpenseParams.expense_group_id">
           <option v-for="group in expenseGroups" :key="group.id" :value="group.id">
             {{ group.name }}
           </option>

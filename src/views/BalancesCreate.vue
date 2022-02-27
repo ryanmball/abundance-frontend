@@ -62,8 +62,8 @@
     <br />
     <br />
     <br />
-    <form v-on:submit.prevent="balanceCreate()">
-      <h1>Create New Balance</h1>
+    <form v-on:submit.prevent="balancesCreate()">
+      <h1>Create New Monthly Beginning Balances</h1>
       <ul>
         <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
       </ul>
@@ -75,13 +75,9 @@
         <label>Year:</label>
         <input type="number" v-model="newBalanceParams.year" />
       </div>
-      <div>
-        <label>Amount:</label>
-        <input type="text" v-model="newBalanceParams.amount" />
-      </div>
-      <div>
-        <label>Account:</label>
-        <!-- ADD ACCOUNT_ID SELECT DROPDOWN HERE -->
+      <div v-for="account in accounts" :key="account.id">
+        <label>{{ account.name }}:</label>
+        <input type="number" placeholder="0.00" step="any" min="0.00" v-model="newBalances[account.id]" />
       </div>
       <input type="submit" value="Submit" />
     </form>
@@ -131,11 +127,19 @@ import axios from "axios";
 export default {
   data: function () {
     return {
+      accounts: [],
       newMonthlyBalanceParams: {},
       newBalanceParams: {},
+      newBalances: {},
       newAccountParams: {},
       errors: [],
     };
+  },
+  created: function () {
+    axios.get("/accounts").then((response) => {
+      console.log("User Accounts", response.data);
+      this.accounts = response.data;
+    });
   },
   methods: {
     monthlyBalanceCreate: function () {
@@ -149,16 +153,20 @@ export default {
           this.errors = error.response.data.errors;
         });
     },
-    balanceCreate: function () {
-      axios
-        .post("/balances", this.newBalanceParams)
-        .then((response) => {
+    balancesCreate: function () {
+      Object.entries(this.newBalances).forEach((balance) => {
+        const [id, amount] = balance;
+        let newBalance = {};
+        newBalance.month = this.newBalanceParams.month;
+        newBalance.year = this.newBalanceParams.year;
+        newBalance.amount = amount;
+        newBalance.account_id = id;
+        axios.post("/balances", newBalance).then((response) => {
           console.log(response.data);
           this.clearParams();
-        })
-        .catch((error) => {
-          this.errors = error.response.data.errors;
+          newBalance = {};
         });
+      });
     },
     accountCreate: function () {
       axios
@@ -175,6 +183,7 @@ export default {
       this.newMonthlyBalanceParams = {};
       this.newBalanceParams = {};
       this.newAccountParams = {};
+      this.newBalances = {};
     },
   },
 };

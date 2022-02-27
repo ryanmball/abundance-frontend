@@ -155,19 +155,19 @@ export default {
   },
   created: function () {
     axios.get("/expenses").then((response) => {
-      console.log(response.data);
+      console.log("All Expenses", response.data);
       this.expenses = response.data;
     });
     axios.get("/incomes").then((response) => {
-      console.log(response.data);
+      console.log("All Incomes", response.data);
       this.incomes = response.data;
     });
     axios.get("/calcs/monthly_data").then((response) => {
-      console.log(response.data);
+      console.log("Monthly Data", response.data);
       this.monthlyData = response.data;
     });
     axios.get("/current_balances").then((response) => {
-      console.log(response.data);
+      console.log("Current Balance", response.data);
       this.currentBalance = response.data;
     });
   },
