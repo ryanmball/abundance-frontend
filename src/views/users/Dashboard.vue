@@ -18,18 +18,18 @@
     <span>
       Month:
       <select id="month" name="month" v-model="monthFilter">
-        <option value="1">January</option>
-        <option value="2">February</option>
-        <option value="3">March</option>
-        <option value="4">April</option>
-        <option value="5">May</option>
-        <option value="6">June</option>
-        <option value="7">July</option>
-        <option value="8">August</option>
-        <option value="9">September</option>
-        <option value="10">October</option>
-        <option value="11">November</option>
-        <option value="12">December</option>
+        <option value="JAN">January</option>
+        <option value="FEB">February</option>
+        <option value="MAR">March</option>
+        <option value="APR">April</option>
+        <option value="MAY">May</option>
+        <option value="JUN">June</option>
+        <option value="JUL">July</option>
+        <option value="AUG">August</option>
+        <option value="SEP">September</option>
+        <option value="OCT">October</option>
+        <option value="NOV">November</option>
+        <option value="DEC">December</option>
       </select>
     </span>
     <h3>Activity</h3>
@@ -150,7 +150,7 @@ export default {
       dateID: "",
       currentDate: true,
       yearFilter: new Date().getFullYear(),
-      monthFilter: new Date().getMonth() + 1,
+      monthFilter: new Date().toLocaleString("default", { month: "short" }).toUpperCase(),
     };
   },
   created: function () {
@@ -196,7 +196,10 @@ export default {
     },
     updateDate: function () {
       this.dateID = `${this.monthFilter}.${this.yearFilter}`;
-      if (this.monthFilter != new Date().getMonth() + 1 || this.yearFilter != new Date().getFullYear()) {
+      if (
+        this.monthFilter != new Date().toLocaleString("default", { month: "short" }).toUpperCase() ||
+        this.yearFilter != new Date().getFullYear()
+      ) {
         this.currentDate = false;
       } else {
         this.currentDate = true;
